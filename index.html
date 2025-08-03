@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Daily To-Do list</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2 style="margin-bottom: 20px; font-size: 30px;">Daily To-Do list</h2>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('table')"
+                style="font-family: 'Kanit', 'Segoe UI', Arial, sans-serif;">ตาราง</button>
+            <button class="tab-btn" onclick="showTab('kanban')"
+                style="font-family: 'Kanit', 'Segoe UI', Arial, sans-serif;">บอร์ด</button>
+        </div>
+        <button class="add-task-btn" onclick="openAddTaskModal()"
+            style="font-family: 'Kanit', 'Segoe UI', Arial, sans-serif;">เพิ่มงาน</button>
+        <div id="table-tab">
+            <table>
+                <thead>
+                    <tr>
+                        <th>งานที่ต้องทำ</th>
+                        <th>ความสำคัญ</th>
+                        <th>ความท้าทายของงาน</th>
+                        <th>สถานะ</th>
+                        <th>ทำเสร็จแล้ว</th>
+                        <th>เดดไลน์</th>
+                        <th>เวลาที่เหลือ</th>
+                    </tr>
+                </thead>
+                <tbody id="todo-body">
+                </tbody>
+            </table>
+        </div>
+        <div id="kanban-tab" class="hidden">
+            <div class="kanban">
+                <div class="kanban-col">
+                    <div class="kanban-title"><span class="status">Not started</span></div>
+                    <div id="not-started-col">
+                    </div>
+                </div>
+                <div class="kanban-col">
+                    <div class="kanban-title"><span class="badge medium">In progress</span></div>
+                    <div id="in-progress-col">
+                    </div>
+                </div>
+                <div class="kanban-col">
+                    <div class="kanban-title"><span class="badge low">Done</span></div>
+                    <div id="done-col">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="side-panel" class="hidden">
+        <div style="display: flex; justify-content: space-between;">
+            <button class="exit-btn" onclick="closeSidePanel()" title="ปิด">
+                <img src="./exit.svg" alt="ปิด">
+            </button>
+            <button class="exit-btn" style="margin-left: 422px;" onclick="editPanel()" title="แก้ไข">
+                <img src="./edit.svg" alt="ปิด">
+            </button>
+        </div>
+        <h2 id="panel-title" style="margin-top:10px;"></h2>
+        <div style="margin:18px 0;">
+            <label style="font-weight:500;"><input type="checkbox" id="panel-checkbox"> ทำเสร็จแล้ว</label>
+        </div>
+        <div style="margin-bottom:14px;">
+            <span style="margin-right:8px;"><img src="./clock.svg" style="height: 18px;" alt="" srcset="">
+                ความสำคัญ</span>
+            <span id="panel-priority" class="badge"></span>
+        </div>
+        <div style="margin-bottom:14px;">
+            <span style="margin-right:8px;"><img src="./clock.svg" style="height: 18px;" alt="" srcset="">
+                ความท้าทายของงาน</span>
+            <span id="panel-effort" class="badge"></span>
+        </div>
+        <div style="margin-bottom:14px;">
+            <span style="margin-right:8px;">&#9776; เดดไลน์</span>
+            <span id="panel-time"></span>
+        </div>
+        <div>
+            <span style="margin-right:8px;"><img src="./loader.svg" style="height: 18px;"> สถานะ</span>
+
+            <span id="panel-status" class="status"></span>
+        </div>
+
+    </div>
+
+    <div id="add-task-modal" class="modal">
+        <div class="modal-content">
+            <h3>เพิ่มงานใหม่</h3>
+            <label for="task-title">ชื่องาน</label>
+            <input type="text" id="task-title" placeholder="กรอกชื่องาน">
+            <label for="task-priority">ความสำคัญ</label>
+            <select id="task-priority">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+
+            <label for="task-effort">ความท้าทายของงาน</label>
+            <select id="task-effort">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+
+            <label for="task-status">สถานะ</label>
+            <select id="task-status">
+                <option value="Not started">Not started</option>
+                <option value="In progress">In progress</option>
+                <option value="Done">Done</option>
+            </select>
+            <label for="task-deadline">เดดไลน์</label>
+            <input type="datetime-local" id="task-deadline">
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeAddTaskModal()">ยกเลิก</button>
+                <button class="submit-btn" onclick="addNewTask()">เพิ่ม</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-task-modal" class="modal">
+        <div class="modal-content">
+            <h3>แก้ไขงาน</h3>
+            <label for="task-title">ชื่องาน</label>
+            <input type="text" id="task-title" placeholder="กรอกชื่องาน">
+            <label for="task-priority">ความสำคัญ</label>
+            <select id="task-priority">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+            <label for="task-effort">ความท้าทายของงาน</label>
+            <select id="task-effort">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+            <label for="task-status">สถานะ</label>
+            <select id="task-status">
+                <option value="Not started">Not started</option>
+                <option value="In progress">In progress</option>
+                <option value="Done">Done</option>
+            </select>
+            <label for="task-deadline">เดดไลน์</label>
+            <input type="datetime-local" id="task-deadline">
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeEditTaskModal()">ยกเลิก</button>
+                <button class="submit-btn" onclick="saveEditTask()">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+
+</html>
